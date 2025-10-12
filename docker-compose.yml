@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  upstox-mcp:
+    build: .
+    container_name: upstox-mcp-server
+    volumes:
+      # Mount data directory for token persistence
+      - ./data:/app/data
+      # Mount config file if exists
+      - ./upstox_token.json:/app/upstox_token.json:ro
+    environment:
+      # Set your Upstox API credentials here
+      - UPSTOX_API_KEY=${UPSTOX_API_KEY}
+      - UPSTOX_API_SECRET=${UPSTOX_API_SECRET}
+      - UPSTOX_REDIRECT_URI=${UPSTOX_REDIRECT_URI:-http://localhost:8080}
+    ports:
+      # Expose port for authentication callback
+      - "8080:8080"
+    restart: unless-stopped
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import upstox_client; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      
+  # Optional: Add a simple web interface for authentication
+  upstox-auth-helper:
+    build: .
+    container_name: upstox-auth-helper
+    command: ["python", "authenticate.py"]
+    volumes:
+      - ./data:/app/data
+    environment:
+      - UPSTOX_API_KEY=${UPSTOX_API_KEY}
+      - UPSTOX_API_SECRET=${UPSTOX_API_SECRET}
+      - UPSTOX_REDIRECT_URI=${UPSTOX_REDIRECT_URI:-http://localhost:8080}
+    ports:
+      - "8081:8080"
+    profiles: ["auth"]
