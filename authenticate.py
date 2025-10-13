@@ -45,7 +45,7 @@ def main():
         else:
             print("⚠️  Could not save token to file")
         
-        # Test connection
+        # Test connection using the authenticated client
         print("\n🧪 Testing connection...")
         profile = client.get_user_profile()
         print(f"👤 User: {profile['user_name']}")

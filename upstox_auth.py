@@ -186,7 +186,10 @@ class UpstoxAuth:
         
         try:
             user_api = UserApi(self.api_client)
-            profile = user_api.get_profile(api_version='2.0')
+            response = user_api.get_profile(api_version='2.0')
+            
+            # Profile data is nested under 'data' attribute
+            profile = response.data
             
             return {
                 'user_name': profile.user_name,
@@ -214,11 +217,21 @@ class UpstoxAuth:
         
         try:
             market_api = MarketHolidaysAndTimingsApi(self.api_client)
-            status_response = market_api.get_market_status(api_version='2.0')
             
+            # Get status for all major exchanges
+            exchanges = ['NSE', 'BSE', 'NFO', 'BFO', 'MCX']
             market_status = {}
-            for exchange_status in status_response:
-                market_status[exchange_status.exchange] = exchange_status.market_status
+            
+            for exchange in exchanges:
+                try:
+                    response = market_api.get_market_status(exchange)
+                    # Market status response structure - use 'status' attribute
+                    if hasattr(response, 'data') and response.data:
+                        market_status[exchange] = response.data.status
+                    else:
+                        market_status[exchange] = "Unknown"
+                except Exception as e:
+                    market_status[exchange] = f"Error: {str(e)}"
             
             return market_status
         except Exception as e:
