@@ -13,6 +13,11 @@ wheels/
 upstox_token.json
 .env
 
+# Instrument data files (generated from complete.json.gz)
+equity_instruments.json
+popular_stocks.json
+extract_instruments.py
+
 # Docker
 data/
 *.log

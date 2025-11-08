@@ -103,6 +103,8 @@ uv run python upstox_server.py
 ## 📋 Available Tools
 
 ### 🔧 MCP Tools
+
+#### Portfolio & Account Tools
 1. **`get_user_profile()`**
    - Returns complete user account information
    - Shows broker details, exchanges, products available
@@ -116,6 +118,24 @@ uv run python upstox_server.py
    - Shows active and closed trading positions
    - Covers all exchanges (NSE, BSE, NFO, MCX, CDS)
    - Displays unrealised vs realised P&L
+
+#### Market Data Tools
+4. **`get_stock_price(instrument_key)`**
+   - Get current Last Traded Price (LTP) for any stock
+   - Quick price lookup using instrument key
+
+5. **`get_full_market_quote(instrument_key)`**
+   - Detailed market data with OHLC (Open, High, Low, Close)
+   - Includes volume, day change, and percentage change
+
+#### Stock Search Tools
+6. **`get_instrument_key(symbol)`**
+   - Find instrument key for any stock symbol
+   - Returns company name and category
+
+7. **`search_stocks(search_term, limit)`**
+   - Search stocks by symbol or company name
+   - Returns matching stocks with details
 
 ## 🐳 Docker Commands
 
@@ -154,16 +174,17 @@ The authentication process uses Upstox OAuth2 flow:
 
 ```
 Upstox-MCP/
-├── upstox_server.py      # Main MCP server with trading tools
-├── upstox_auth.py        # Authentication module
-├── authenticate.py       # Interactive authentication script
-├── config.py             # Shared configuration
-├── server.py             # Demo MCP server
-├── Dockerfile            # Docker container definition
-├── docker-compose.yml    # Docker orchestration
-├── setup.sh              # Automated setup script
-├── pyproject.toml        # Python project configuration
-└── README.md             # This file
+├── upstox_server.py           # Main MCP server with all trading tools
+├── upstox_auth.py             # Authentication module
+├── authenticate.py            # Interactive authentication script
+├── config.py                  # Configuration loader
+├── categorized_stocks.json    # Curated stock database (2,484 stocks)
+├── all_stocks_detailed.json   # Complete stock master data
+├── Dockerfile                 # Docker container definition
+├── docker-compose.yml         # Docker orchestration
+├── setup.sh                   # Automated setup script
+├── pyproject.toml             # Python project configuration
+└── README.md                  # This file
 ```
 
 ## 🛡️ Security
@@ -220,6 +241,15 @@ Once integrated with Claude Desktop, you can:
 
 "Get my account details"
 → Calls get_user_profile() tool
+
+"What's the current price of Infosys?"
+→ Calls get_instrument_key("INFY") then get_stock_price()
+
+"Search for Reliance stocks"
+→ Calls search_stocks("Reliance")
+
+"Get full market quote for TCS"
+→ Calls get_instrument_key("TCS") then get_full_market_quote()
 ```
 
 ## 🤝 Contributing
